@@ -14,7 +14,16 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                // Content
+                if let content = Screens(rawValue: selectedTab) {
+                    switch content {
+                    case .home:
+                        HomeScreen()
+                    case .radio:
+                        RadioScreen()
+                    case .search:
+                        SearchScreen()
+                    }
+                }
             }
             .containerRelativeFrame([.horizontal, .vertical])
             .background(DarkTheme.backgroundColor.color)
@@ -47,6 +56,7 @@ struct ContentView: View {
                             .padding()
                             .foregroundColor(selectedTab == s.rawValue ? DarkTheme.primaryColor.color : DarkTheme.textDisabledGray.color)
                         }
+                        .buttonStyle(PlainButtonStyle())
                         Spacer()
                     }
                 }

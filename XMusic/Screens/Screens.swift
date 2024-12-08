@@ -5,28 +5,25 @@
 //  Created by eb209 on 2024/12/8.
 //
 
+import SwiftUI
+
 enum Screens: Int, CaseIterable {
-    case Home = 0
-    case Radio = 1
-    case Search = 2
+    case home = 0
+    case radio = 1
+    case search = 2
     
     var title: String {
-        return String(describing: self)
+        return String(describing: self).capitalized
     }
     
     var icon: String {
         switch self {
-        case .Home:
+        case .home:
             return "house.fill"
-        case .Radio:
+        case .radio:
             return "antenna.radiowaves.left.and.right"
-        case .Search:
+        case .search:
             return "magnifyingglass"
         }
     }
-}
-
-struct ScreenData {
-    var title: String
-    var icon: String
 }
