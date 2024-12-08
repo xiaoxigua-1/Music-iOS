@@ -1,0 +1,74 @@
+# Xcode specific files
+#######################
+
+# User-specific files
+.idea/
+*.xcuserdata
+*.xcuserstate
+
+# Build results
+build/
+DerivedData/
+
+# Workspace file (you may want to track this in some cases)
+*.xcworkspace
+
+# Scheme files
+*.xcscheme
+
+# User-specific Xcode project settings
+xcuserdata/
+
+# CocoaPods
+#######################
+
+# CocoaPods specific files
+Pods/
+Podfile.lock
+
+# Carthage
+#######################
+
+# Carthage specific files
+Carthage/Build/
+
+# Swift Package Manager
+#######################
+
+# SwiftPM specific files
+.swiftpm/
+Packages/
+Package.pins
+Package.resolved
+
+# Xcode Server
+#######################
+
+# Xcode Server specific files
+.xcscheme
+
+# Temporary files
+#######################
+
+# Other temporary files
+*.swp
+*.swo
+*~
+
+# Xcode archive files (useful for .ipa or .xcarchive files)
+*.xcarchive
+*.ipa
+
+# Playground specific
+#######################
+
+# Playground specific files
+timeline.xctimeline
+playground.xcplayground
+
+# iOS & macOS Simulators
+#######################
+
+# Simulator specific files
+*.simulator/
+
