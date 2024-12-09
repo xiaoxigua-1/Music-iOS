@@ -9,12 +9,31 @@ import SwiftUI
 import SwiftData
 
 struct HomeScreen: View {
+    @Environment(\.modelContext) private var modelContext
     @Query var playlists: [PlaylistModel]
     
+    
     var body: some View {
-        List(playlists) { pl in
-            PlaylistItem(playlistLIst: pl)
-                .listRowBackground(Color.clear)
+        List {
+            ForEach(playlists, id: \.playlistId) { pl in
+                PlaylistItem(playlistLIst: pl)
+                    .listRowBackground(Color.clear)
+                    .swipeActions(edge: .trailing, content: {
+                        Button {
+                            modelContext.delete(pl)
+                        } label: {
+                            Image(systemName: "trash")
+                        }
+                        .tint(.red)
+                        
+                        Button {
+
+                        } label: {
+                            Image(systemName: "heart")
+                        }
+                        .tint(.green)
+                    })
+            }
         }
         .scrollContentBackground(.hidden)
         .listStyle(.plain)
@@ -47,7 +66,7 @@ struct HomeAlertButton: View {
             TextField("", text: $playlistDescription, prompt: Text("Description").foregroundStyle(DarkTheme.textDisabledGray.color))
                 .foregroundStyle(DarkTheme.textHighColor.color)
                 .padding(.all, 10)
-                .cornerRadius(20)
+                .cornerRadius(12)
                 .overlay(
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(.blue, lineWidth: 2)

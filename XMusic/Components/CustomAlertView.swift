@@ -60,7 +60,7 @@ struct CustomAlertView<Content: View>: View {
         .zIndex(1)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
         .background(
-            DarkTheme.backgroundColor.color
+            DarkTheme.backgroundColor.color.opacity(0.5)
         )
     }
 }
