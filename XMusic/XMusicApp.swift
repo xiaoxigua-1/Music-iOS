@@ -12,6 +12,8 @@ import SwiftData
 struct XMusicApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
+            PlaylistModel.self,
+            SongModel.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

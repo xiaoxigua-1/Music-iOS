@@ -8,20 +8,27 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.modelContext) private var modelContext
+    
     @State var title: String? = "Home"
-    @State var selectedTab = 0
+    @State var selectedTab = "home"
+    
+    @State var alerIsPresented = false
     
     var body: some View {
         NavigationStack {
-            VStack {
-                if let content = Screens(rawValue: selectedTab) {
-                    switch content {
-                    case .home:
-                        HomeScreen()
-                    case .radio:
-                        RadioScreen()
-                    case .search:
-                        SearchScreen()
+            ZStack {
+                VStack {
+                    Screens.screen(selectedTab: selectedTab)
+                }
+                if (alerIsPresented) {
+                    if let content = Screens(rawValue: selectedTab) {
+                        switch content {
+                        case .home:
+                            HomeAlertButton(isPresented: $alerIsPresented)
+                        default:
+                            EmptyView()
+                        }
                     }
                 }
             }
@@ -38,6 +45,9 @@ struct ContentView: View {
                             .font(.largeTitle)
                             .fontWeight(.bold)
                     }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Screens.rightButton(selectedTab: selectedTab, isPresented: $alerIsPresented)
                 }
                 ToolbarItemGroup(placement: .bottomBar) {
                     ForEach(Screens.allCases, id: \.self) { s in

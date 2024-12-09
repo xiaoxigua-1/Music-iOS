@@ -6,11 +6,12 @@
 //
 
 import SwiftUI
+import SwiftData
 
-enum Screens: Int, CaseIterable {
-    case home = 0
-    case radio = 1
-    case search = 2
+enum Screens: String, CaseIterable {
+    case home = "home"
+    case radio = "radio"
+    case search = "search"
     
     var title: String {
         return String(describing: self).capitalized
@@ -24,6 +25,32 @@ enum Screens: Int, CaseIterable {
             return "antenna.radiowaves.left.and.right"
         case .search:
             return "magnifyingglass"
+        }
+    }
+    
+    @ViewBuilder
+    static func screen(selectedTab: String) -> some View {
+        if let content = Screens(rawValue: selectedTab) {
+            switch content {
+            case .home:
+                HomeScreen()
+            case .radio:
+                RadioScreen()
+            case .search:
+                SearchScreen()
+            }
+        }
+    }
+    
+    @ViewBuilder
+    static func rightButton(selectedTab: String, isPresented: Binding<Bool>) -> some View {
+        if let content = Screens(rawValue: selectedTab) {
+            switch content {
+            case .home, .radio:
+                AddButton(isPresented: isPresented)
+            case .search:
+                EmptyView()
+            }
         }
     }
 }
