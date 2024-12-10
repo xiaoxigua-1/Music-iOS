@@ -12,12 +12,13 @@ enum Screens: String, CaseIterable {
     case home = "home"
     case radio = "radio"
     case search = "search"
+    case playlist = "home/.+"
     
     var title: String {
         return String(describing: self).capitalized
     }
     
-    var icon: String {
+    var icon: String? {
         switch self {
         case .home:
             return "house.fill"
@@ -25,32 +26,48 @@ enum Screens: String, CaseIterable {
             return "antenna.radiowaves.left.and.right"
         case .search:
             return "magnifyingglass"
+        default:
+            return nil
         }
     }
     
-    @ViewBuilder
-    static func screen(selectedTab: String) -> some View {
-        if let content = Screens(rawValue: selectedTab) {
-            switch content {
-            case .home:
-                HomeScreen()
-            case .radio:
-                RadioScreen()
-            case .search:
-                SearchScreen()
+    static func getScreen(selectedTab: String) -> Screens? {
+        for screen in Screens.allCases {
+            let regex = try! Regex("^\(screen.rawValue)$").anchorsMatchLineEndings()
+            
+            if selectedTab.contains(regex) {
+                return screen
             }
+        }
+        
+        return nil
+    }
+    
+    @ViewBuilder
+    static func screen(selectedTab: Binding<String>) -> some View {
+        let content = getScreen(selectedTab: selectedTab.wrappedValue) ?? Screens.home
+        
+        switch content {
+        case .home:
+            HomeScreen(selectedTab: selectedTab)
+        case .radio:
+            RadioScreen()
+        case .search:
+            SearchScreen()
+        case .playlist:
+            EmptyView()
         }
     }
     
     @ViewBuilder
     static func rightButton(selectedTab: String, isPresented: Binding<Bool>) -> some View {
-        if let content = Screens(rawValue: selectedTab) {
-            switch content {
-            case .home, .radio:
-                AddButton(isPresented: isPresented)
-            case .search:
-                EmptyView()
-            }
+        let content = getScreen(selectedTab: selectedTab) ?? Screens.home
+        
+        switch content {
+        case .home, .radio, .playlist:
+            AddButton(isPresented: isPresented)
+        case .search:
+            EmptyView()
         }
     }
 }

@@ -11,7 +11,7 @@ import SwiftData
 struct HomeScreen: View {
     @Environment(\.modelContext) private var modelContext
     @Query var playlists: [PlaylistModel]
-    
+    @Binding var selectedTab: String
     
     var body: some View {
         List {
@@ -29,10 +29,13 @@ struct HomeScreen: View {
                         Button {
 
                         } label: {
-                            Image(systemName: "heart")
+                            Image(systemName: "pencil")
                         }
                         .tint(.green)
                     })
+                    .onTapGesture {
+                        selectedTab += "/\(pl.playlistId)"
+                    }
             }
         }
         .scrollContentBackground(.hidden)
@@ -83,5 +86,9 @@ struct HomeAlertButton: View {
 }
 
 #Preview {
-    HomeScreen()
+    HomeScreen(selectedTab: Binding(get: {
+        ""
+    }, set: { _ in
+        
+    }))
 }

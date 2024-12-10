@@ -19,7 +19,7 @@ struct ContentView: View {
         NavigationStack {
             ZStack {
                 VStack {
-                    Screens.screen(selectedTab: selectedTab)
+                    Screens.screen(selectedTab: $selectedTab)
                 }
                 if (alerIsPresented) {
                     if let content = Screens(rawValue: selectedTab) {
@@ -51,27 +51,33 @@ struct ContentView: View {
                 }
                 ToolbarItemGroup(placement: .bottomBar) {
                     ForEach(Screens.allCases, id: \.self) { s in
-                        Spacer()
-                        Button(action: {
-                            selectedTab = s.rawValue
-                            title = s.title
-                        }) {
-                            VStack {
-                                Image(systemName: s.icon)
-                                    .font(.title3)
-                                Text(s.title)
-                                    .font(.caption)
-                                    .fontWeight(.bold)
+                        if (s.icon != nil) {
+                            Spacer()
+                            Button(action: {
+                                selectedTab = s.rawValue
+                                title = s.title
+                            }) {
+                                VStack {
+                                    Image(systemName: s.icon!)
+                                        .font(.title3)
+                                    Text(s.title)
+                                        .font(.caption)
+                                        .fontWeight(.bold)
+                                }
+                                .padding()
+                                .foregroundColor(getCurrentRoute(selectedTab: selectedTab) == s.rawValue ? DarkTheme.primaryColor.color : DarkTheme.textDisabledGray.color)
                             }
-                            .padding()
-                            .foregroundColor(selectedTab == s.rawValue ? DarkTheme.primaryColor.color : DarkTheme.textDisabledGray.color)
+                            .buttonStyle(PlainButtonStyle())
+                            Spacer()
                         }
-                        .buttonStyle(PlainButtonStyle())
-                        Spacer()
                     }
                 }
             }
         }
+    }
+    
+    func getCurrentRoute(selectedTab: String) -> String {
+        return selectedTab.split(separator: "/").map { s in String(s)}[0]
     }
 }
 
