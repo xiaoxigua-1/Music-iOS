@@ -55,7 +55,7 @@ enum Screens: String, CaseIterable {
         case .search:
             SearchScreen()
         case .playlist:
-            EmptyView()
+            PlaylistScreen(playlistId: selectedTab.wrappedValue.split(separator: "/").map { String($0) }[1])
         }
     }
     

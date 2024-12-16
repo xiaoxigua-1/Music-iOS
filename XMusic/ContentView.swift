@@ -22,13 +22,14 @@ struct ContentView: View {
                     Screens.screen(selectedTab: $selectedTab)
                 }
                 if (alerIsPresented) {
-                    if let content = Screens(rawValue: selectedTab) {
-                        switch content {
-                        case .home:
-                            HomeAlertButton(isPresented: $alerIsPresented)
-                        default:
-                            EmptyView()
-                        }
+                    let content = Screens.getScreen(selectedTab: selectedTab) ?? Screens.home
+                    switch content {
+                    case .home:
+                        HomeAlertButton(isPresented: $alerIsPresented)
+                    case .playlist:
+                        PlaylistAddSongAlert(playlistId: selectedTab.split(separator: "/").map({ String($0)})[1],isPresented: $alerIsPresented)
+                    default:
+                        EmptyView()
                     }
                 }
             }

@@ -29,5 +29,6 @@ struct XMusicApp: App {
             ContentView()
         }
         .modelContainer(sharedModelContainer)
+        .environmentObject(MusicPlayer())
     }
 }

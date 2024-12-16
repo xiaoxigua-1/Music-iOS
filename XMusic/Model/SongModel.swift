@@ -12,11 +12,19 @@ import Foundation
 final class SongModel {
     @Attribute(.unique) var songId: UUID
     @Relationship(deleteRule: .cascade, inverse: \PlaylistModel.songs) var playlist: PlaylistModel
-    @Attribute var title: String
-    
-    init (playlist: PlaylistModel, title: String) {
+    @Attribute var bookmark: Data
+    @Attribute var title: String?
+    @Attribute var artist: String?
+    @Attribute var album: String?
+    @Attribute var artworkURL: URL?
+
+    init (playlist: PlaylistModel, bookmark: Data, title: String? = nil, artist: String? = nil, album: String? = nil, artworkURL: URL? = nil) {
         self.songId = UUID()
         self.playlist = playlist
+        self.bookmark = bookmark
         self.title = title
+        self.artist = artist
+        self.album = album
+        self.artworkURL = artworkURL
     }
 }
