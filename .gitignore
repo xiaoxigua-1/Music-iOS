@@ -72,3 +72,7 @@ playground.xcplayground
 # Simulator specific files
 *.simulator/
 
+
+# Mac
+
+.DS_Store
