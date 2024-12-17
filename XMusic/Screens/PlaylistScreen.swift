@@ -23,7 +23,7 @@ struct PlaylistScreen: View {
         if let p = playlist.first {
             List {
                 ForEach(Array(p.songs.enumerated()), id: \.element.songId) { index, song in
-                    SongItem(song: song)
+                    SongItem(song: song, playing: musicPlayer.index == index && musicPlayer.playlist?.playlistId == p.playlistId)
                         .listRowBackground(Color.clear)
                         .onTapGesture {
                             musicPlayer.setPlaylist(playlist: p, index: index)
