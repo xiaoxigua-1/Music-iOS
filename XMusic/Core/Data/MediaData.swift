@@ -39,11 +39,12 @@ class MediaData: VLCMedia {
                 let artist = self.metaData.artist
                 let album = self.metaData.album
                 let artworkURL = self.metaData.artworkURL
+                let artworkData = try! Data(contentsOf: artworkURL!)
                 
                 ret(SongModel(
                     playlist: self.song.playlist,
                     bookmark: self.song.bookmark,
-                    title: title, artist: artist, album: album, artworkURL: artworkURL))
+                    title: title, artist: artist, album: album, artwork: artworkData))
             } else {
                 ret(nil)
             }

@@ -15,7 +15,7 @@ struct XMusicApp: App {
             PlaylistModel.self,
             SongModel.self
         ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
 
         do {
             return try ModelContainer(for: schema, configurations: [modelConfiguration])
@@ -29,6 +29,6 @@ struct XMusicApp: App {
             ContentView()
         }
         .modelContainer(sharedModelContainer)
-        .environmentObject(MusicPlayer())
+        .environmentObject(MusicPlayerDelegate())
     }
 }

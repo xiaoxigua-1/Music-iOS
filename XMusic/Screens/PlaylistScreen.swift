@@ -11,7 +11,7 @@ import SwiftData
 struct PlaylistScreen: View {
     var playlistId: String
     @Query var playlists: [PlaylistModel]
-    @EnvironmentObject var musicPlayer: MusicPlayer
+    @EnvironmentObject var musicPlayer: MusicPlayerDelegate
     
     var playlist: [PlaylistModel] {
         return playlists.compactMap({ p in
@@ -27,7 +27,7 @@ struct PlaylistScreen: View {
                         .listRowBackground(Color.clear)
                         .onTapGesture {
                             musicPlayer.setPlaylist(playlist: p, index: index)
-                            musicPlayer.play()
+                            musicPlayer.musicPlayer.play()
                         }
                 }
             }

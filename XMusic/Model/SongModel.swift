@@ -16,15 +16,15 @@ final class SongModel {
     @Attribute var title: String?
     @Attribute var artist: String?
     @Attribute var album: String?
-    @Attribute var artworkURL: URL?
+    @Attribute var artwork: Data?
 
-    init (playlist: PlaylistModel, bookmark: Data, title: String? = nil, artist: String? = nil, album: String? = nil, artworkURL: URL? = nil) {
+    init (playlist: PlaylistModel, bookmark: Data, title: String? = nil, artist: String? = nil, album: String? = nil, artwork: Data? = nil) {
         self.songId = UUID()
         self.playlist = playlist
         self.bookmark = bookmark
         self.title = title
         self.artist = artist
         self.album = album
-        self.artworkURL = artworkURL
+        self.artwork = artwork
     }
 }

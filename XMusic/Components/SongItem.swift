@@ -39,13 +39,11 @@ struct SongItem: View {
                     .foregroundStyle(DarkTheme.textMediumGray.color)
             }
         }.onAppear {
-            MediaData(song: song).getMetas(ret: { s in
-                if let url = s?.artworkURL?.path, let uiImage = UIImage(contentsOfFile: url) {
-                    self.artworkImage = uiImage
-                } else {
-                    print("Failed to load image")
-                }
-            })
+            if let data = song.artwork, let uiImage = UIImage(data: data) {
+                self.artworkImage = uiImage
+            } else {
+                print("Failed to load image")
+            }
         }
     }
 }

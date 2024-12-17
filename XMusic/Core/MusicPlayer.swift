@@ -7,26 +7,95 @@
 
 import MobileVLCKit
 
-class MusicPlayer: ObservableObject {
-    static var vlcLib = VLCLibrary()
+
+class MusicPlayer: VLCMediaPlayer {
+    override init() {
+        super.init(library: VLCLibrary())
+    }
     
-    @Published var isPlaying = false
-    @Published var playlist: PlaylistModel? = nil
-    @Published var index: Int = 0
-    var player = VLCMediaPlayer(library: vlcLib)
-    
-    func play() {
-        if !isPlaying && player.media != nil {
-            player.play()
-            isPlaying = true
+    override func play() {
+        if !isPlaying && media != nil {
+            super.play()
         }
     }
     
-    func pause() {
+    override func pause() {
         if isPlaying {
-            player.pause()
-            isPlaying = false
+            super.pause()
         }
+    }
+}
+
+class MusicPlayerDelegate: NSObject, VLCMediaPlayerDelegate, ObservableObject {
+    @Published var playlist: PlaylistModel? = nil
+    @Published var index: Int = 0
+    @Published var nowIsPlaying = false
+    @Published var loopMode: LoopMode = .Playlist
+    @Published var progress: Progress? = nil
+    
+    var musicPlayer = MusicPlayer()
+    
+    override init() {
+        super.init()
+        
+        musicPlayer.delegate = self
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(mediaPlayerTimeChanged(_: )),
+            name: Notification.Name(VLCMediaPlayerTimeChanged),
+            object: nil
+        )
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(mediaPlayerStateChanged(_: )),
+            name: Notification.Name(VLCMediaPlayerStateChanged),
+            object: nil
+        )
+    }
+    
+    @objc func mediaPlayerStateChanged(_ aNotification: Notification) {
+        switch musicPlayer.state {
+        case .ended:
+            switch loopMode {
+            case .Single:
+                setMedia(index: index)
+                musicPlayer.play()
+            case .Playlist:
+                next()
+            }
+        default:
+            nowIsPlaying = musicPlayer.isPlaying
+        }
+    }
+    
+    @objc func mediaPlayerTimeChanged(_ aNotification: Notification) {
+        let position = musicPlayer.position
+        let time = musicPlayer.time
+        let remainingTime = musicPlayer.remainingTime
+        
+        progress = Progress(time: time, position: position, remainingTime: remainingTime)
+    }
+    
+    func next() {
+        if self.index + 1 < playlist?.songs.count ?? 0 {
+            self.index += 1
+        } else {
+            self.index = 0
+        }
+        
+        musicPlayer.play()
+    }
+    
+    func prev() {
+        if self.index - 1 > 0 {
+            self.index -= 1
+        } else {
+            self.index = playlist?.songs.count ?? 0
+        }
+        
+        musicPlayer.play()
     }
     
     func setPlaylist(playlist: PlaylistModel, index: Int = 0) {
@@ -38,7 +107,7 @@ class MusicPlayer: ObservableObject {
     
     private func setMedia(index: Int) {
         if let song = playlist?.songs[index] {
-            player.media = MediaData(song: song)
+            musicPlayer.media = MediaData(song: song)
         }
     }
 }
