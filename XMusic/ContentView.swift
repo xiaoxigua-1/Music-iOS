@@ -10,7 +10,6 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     
-    @State var title: String? = "Home"
     @State var selectedTab = "home"
     
     @State var alerIsPresented = false
@@ -20,6 +19,11 @@ struct ContentView: View {
             ZStack {
                 VStack {
                     Screens.screen(selectedTab: $selectedTab)
+                }
+                VStack {
+                    Spacer()
+                    PlayerScreen()
+                        .padding()
                 }
                 if (alerIsPresented) {
                     let content = Screens.getScreen(selectedTab: selectedTab) ?? Screens.home
@@ -40,7 +44,7 @@ struct ContentView: View {
             .toolbarBackgroundVisibility(.visible, for: .bottomBar)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    if let title = title {
+                    if let title = Screens.getScreen(selectedTab: selectedTab)?.title {
                         Text(title)
                             .foregroundColor(DarkTheme.textHighColor.color)
                             .font(.largeTitle)
@@ -56,12 +60,11 @@ struct ContentView: View {
                             Spacer()
                             Button(action: {
                                 selectedTab = s.rawValue
-                                title = s.title
                             }) {
                                 VStack {
                                     Image(systemName: s.icon!)
                                         .font(.title3)
-                                    Text(s.title)
+                                    Text(s.title!)
                                         .font(.caption)
                                         .fontWeight(.bold)
                                 }
@@ -84,4 +87,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(MusicPlayerDelegate())
 }

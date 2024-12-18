@@ -14,10 +14,11 @@ struct HomeScreen: View {
     @Binding var selectedTab: String
     
     var body: some View {
-        List {
-            ForEach(playlists, id: \.playlistId) { pl in
+        List(playlists, id: \.playlistId) { pl in
+            Button(action: {
+                selectedTab += "/\(pl.playlistId)"
+            }, label: {
                 PlaylistItem(playlistLIst: pl)
-                    .listRowBackground(Color.clear)
                     .swipeActions(edge: .trailing, content: {
                         Button {
                             modelContext.delete(pl)
@@ -33,10 +34,8 @@ struct HomeScreen: View {
                         }
                         .tint(.green)
                     })
-                    .onTapGesture {
-                        selectedTab += "/\(pl.playlistId)"
-                    }
-            }
+            })
+            .listRowBackground(Color.clear)
         }
         .scrollContentBackground(.hidden)
         .listStyle(.plain)

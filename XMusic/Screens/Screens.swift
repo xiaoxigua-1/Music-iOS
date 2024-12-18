@@ -14,8 +14,13 @@ enum Screens: String, CaseIterable {
     case search = "search"
     case playlist = "home/.+"
     
-    var title: String {
-        return String(describing: self).capitalized
+    var title: String? {
+        switch self {
+        case .playlist:
+            return nil
+        default:
+            return String(describing: self).capitalized
+        }
     }
     
     var icon: String? {

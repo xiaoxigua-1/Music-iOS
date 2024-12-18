@@ -46,13 +46,6 @@ class MusicPlayerDelegate: NSObject, VLCMediaPlayerDelegate, ObservableObject {
             name: Notification.Name(VLCMediaPlayerTimeChanged),
             object: nil
         )
-        
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(mediaPlayerStateChanged(_: )),
-            name: Notification.Name(VLCMediaPlayerStateChanged),
-            object: nil
-        )
     }
     
     @objc func mediaPlayerStateChanged(_ aNotification: Notification) {
@@ -62,8 +55,10 @@ class MusicPlayerDelegate: NSObject, VLCMediaPlayerDelegate, ObservableObject {
             case .Single:
                 setMedia(index: index)
                 musicPlayer.play()
+                break
             case .Playlist:
                 next()
+                break
             }
         default:
             nowIsPlaying = musicPlayer.isPlaying
@@ -73,7 +68,7 @@ class MusicPlayerDelegate: NSObject, VLCMediaPlayerDelegate, ObservableObject {
     @objc func mediaPlayerTimeChanged(_ aNotification: Notification) {
         let position = musicPlayer.position
         let time = musicPlayer.time
-        let remainingTime = musicPlayer.remainingTime
+        let remainingTime = VLCTime(int: -(musicPlayer.remainingTime?.intValue ?? 0))
         
         progress = Progress(time: time, position: position, remainingTime: remainingTime)
     }
@@ -85,16 +80,18 @@ class MusicPlayerDelegate: NSObject, VLCMediaPlayerDelegate, ObservableObject {
             self.index = 0
         }
         
+        setMedia(index: self.index)
         musicPlayer.play()
     }
     
     func prev() {
-        if self.index - 1 > 0 {
+        if self.index - 1 >= 0 {
             self.index -= 1
         } else {
-            self.index = playlist?.songs.count ?? 0
+            self.index = (playlist?.songs.count ?? 1) - 1
         }
         
+        setMedia(index: self.index)
         musicPlayer.play()
     }
     
@@ -106,6 +103,10 @@ class MusicPlayerDelegate: NSObject, VLCMediaPlayerDelegate, ObservableObject {
     }
     
     private func setMedia(index: Int) {
+        if musicPlayer.media != nil {
+            musicPlayer.stop()
+        }
+        
         if let song = playlist?.songs[index] {
             musicPlayer.media = MediaData(song: song)
         }

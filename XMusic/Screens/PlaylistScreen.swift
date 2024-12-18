@@ -21,15 +21,50 @@ struct PlaylistScreen: View {
     
     var body: some View {
         if let p = playlist.first {
-            List {
-                ForEach(Array(p.songs.enumerated()), id: \.element.songId) { index, song in
-                    SongItem(song: song, playing: musicPlayer.index == index && musicPlayer.playlist?.playlistId == p.playlistId)
-                        .listRowBackground(Color.clear)
-                        .onTapGesture {
-                            musicPlayer.setPlaylist(playlist: p, index: index)
-                            musicPlayer.musicPlayer.play()
-                        }
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(p.playlistTitle)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundStyle(DarkTheme.textHighColor.color)
+                    Text(p.playlistDescription)
+                        .font(.callout)
+                        .foregroundStyle(DarkTheme.textMediumGray.color)
                 }
+                Spacer()
+                VStack(alignment: .trailing) {
+                    Button(action: {
+                        if (p.playlistId != musicPlayer.playlist?.playlistId) {
+                            musicPlayer.setPlaylist(playlist: p)
+                            musicPlayer.musicPlayer.play()
+                        } else {
+                            if (musicPlayer.nowIsPlaying) {
+                                musicPlayer.musicPlayer.pause()
+                            } else {
+                                musicPlayer.musicPlayer.play()
+                            }
+                        }
+                    }, label: {
+                        Image(systemName: musicPlayer.nowIsPlaying && musicPlayer.playlist?.playlistId == p.playlistId ? "pause.fill" : "play.fill")
+                            .foregroundStyle(.white)
+                            .frame(width: 24, height: 24)
+                            .padding(12)
+                            .background(DarkTheme.primaryColor.color)
+                            .clipShape(Capsule())
+                    })
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding()
+
+            List(Array(p.songs.enumerated()), id: \.element.songId) { index, song in
+                Button(action: {
+                    musicPlayer.setPlaylist(playlist: p, index: index)
+                    musicPlayer.musicPlayer.play()
+                }, label: {
+                    SongItem(song: song, playing: musicPlayer.index == index && musicPlayer.playlist?.playlistId == p.playlistId)
+                })
+                .listRowBackground(Color.clear)
             }
             .scrollContentBackground(.hidden)
             .listStyle(.plain)
@@ -62,5 +97,7 @@ struct PlaylistAddSongAlert: View {
                     print(error.localizedDescription)
                 }
             })
+            .environment(\.colorScheme, .dark)
     }
 }
+

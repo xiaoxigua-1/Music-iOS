@@ -10,5 +10,5 @@ import MobileVLCKit
 struct Progress {
     var time: VLCTime
     var position: Float
-    var remainingTime: VLCTime?
+    var remainingTime: VLCTime
 }

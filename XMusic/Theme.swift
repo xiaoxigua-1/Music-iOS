@@ -15,6 +15,8 @@ enum DarkTheme: String {
     case mainContainerColor
     case minContainerColor
     case primaryColor
+    case bottomContainerColor
+    case bottomCoverContainerColor
     
     var color: Color {
         switch self {
@@ -32,6 +34,10 @@ enum DarkTheme: String {
             return Color("MinContainerColor")
         case .primaryColor:
             return Color("SelfPrimaryColor")
+        case .bottomContainerColor:
+            return Color("BottomContainerColor")
+        case .bottomCoverContainerColor:
+            return Color("BottomCoverContainerColor")
         }
     }
 }

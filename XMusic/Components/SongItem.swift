@@ -20,13 +20,10 @@ struct SongItem: View {
                         .resizable()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    Image(systemName: "photo")
+                    Image(systemName: "music.note")
                         .resizable()
                         .frame(width: 24, height: 24)
                         .padding()
-                }
-                
-                if playing {
                 }
             }
             .frame(width: 48, height: 48)
