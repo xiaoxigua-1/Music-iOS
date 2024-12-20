@@ -5,13 +5,14 @@
 //  Created by eb209 on 2024/12/8.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct RadioScreen: View {
     @Query var songs: [SongModel]
     @EnvironmentObject var musicPlayer: MusicPlayerDelegate
-    
+    @Environment(\.modelContext) private var modelContext
+
     var radios: [SongModel] {
         return songs.compactMap({ s in
             switch s.songType {
@@ -22,17 +23,31 @@ struct RadioScreen: View {
             }
         })
     }
- 
+
     var body: some View {
         HStack {
-            List(Array(radios.enumerated()), id: \.element.songId) { index, radio in
-                Button(action: {
-                    musicPlayer.setMedia(media: MediaData(song: radio))
-                    musicPlayer.musicPlayer.play()
-                }, label: {
-                    SongItem(song: radio, playing: musicPlayer.nowPlayingSong?.songId == radio.songId, hasArtwork: false)
+            List {
+                ForEach(Array(radios.enumerated()), id: \.element.songId) {
+                    index, radio in
+                    Button(
+                        action: {
+                            musicPlayer.setMedia(media: MediaData(song: radio))
+                            musicPlayer.musicPlayer.play()
+                        },
+                        label: {
+                            SongItem(
+                                song: radio,
+                                playing: musicPlayer.nowPlayingSong?.songId
+                                    == radio.songId, hasArtwork: false)
+                        }
+                    )
+                    .listRowBackground(Color.clear)
+                }
+                .onDelete(perform: { offsets in
+                    for i in offsets {
+                        modelContext.delete(radios[i])
+                    }
                 })
-                .listRowBackground(Color.clear)
             }
             .safeAreaPadding([.bottom], 80)
             .scrollContentBackground(.hidden)
@@ -42,24 +57,34 @@ struct RadioScreen: View {
     }
 }
 
-
 struct RadioAlertButton: View {
     var isPresented: Binding<Bool>
-    
+
     @Environment(\.modelContext) private var modelContext
-    
+
     @State var radioTitle: String = ""
     @State var radioURL: String = ""
-    
+
     var body: some View {
-        CustomAlertView(isPresented: isPresented, title: "New Radio", primaryAction: {
-            let url = URL(string: radioURL)
-            
-            MediaData(song: SongModel(playlist: nil, songType: .stream(url: url!), title: radioTitle, artist: radioURL)).getMetas(ret: { song in
-                modelContext.insert(song)
-            })
-        }, customContent: VStack {
-            TextField("", text: $radioTitle, prompt: Text("Radio Title").foregroundStyle(DarkTheme.textDisabledGray.color))
+        CustomAlertView(
+            isPresented: isPresented, title: "New Radio",
+            primaryAction: {
+                let url = URL(string: radioURL)
+
+                MediaData(
+                    song: SongModel(
+                        playlist: nil, songType: .stream(url: url!),
+                        title: radioTitle, artist: radioURL)
+                ).getMetas(ret: { song in
+                    modelContext.insert(song)
+                })
+            },
+            customContent: VStack {
+                TextField(
+                    "", text: $radioTitle,
+                    prompt: Text("Radio Title").foregroundStyle(
+                        DarkTheme.textDisabledGray.color)
+                )
                 .foregroundStyle(DarkTheme.textHighColor.color)
                 .padding(.all, 10)
                 .cornerRadius(20)
@@ -67,7 +92,11 @@ struct RadioAlertButton: View {
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(.blue, lineWidth: 2)
                 )
-            TextField("", text: $radioURL, prompt: Text("HTTP URL").foregroundStyle(DarkTheme.textDisabledGray.color))
+                TextField(
+                    "", text: $radioURL,
+                    prompt: Text("HTTP URL").foregroundStyle(
+                        DarkTheme.textDisabledGray.color)
+                )
                 .foregroundStyle(DarkTheme.textHighColor.color)
                 .padding(.all, 10)
                 .cornerRadius(12)
@@ -75,6 +104,6 @@ struct RadioAlertButton: View {
                     RoundedRectangle(cornerRadius: 12)
                         .stroke(.blue, lineWidth: 2)
                 )
-        }.padding())
+            }.padding())
     }
 }

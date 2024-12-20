@@ -17,7 +17,7 @@ enum DarkTheme: String {
     case primaryColor
     case bottomContainerColor
     case bottomCoverContainerColor
-    
+
     var color: Color {
         switch self {
         case .textHighColor:

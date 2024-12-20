@@ -9,11 +9,11 @@ import SwiftUI
 
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
-    
+
     @State var selectedTab = "home"
-    
+
     @State var alerIsPresented = false
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -25,15 +25,20 @@ struct ContentView: View {
                     PlayerScreen()
                         .padding()
                 }
-                if (alerIsPresented) {
-                    let content = Screens.getScreen(selectedTab: selectedTab) ?? Screens.home
+                if alerIsPresented {
+                    let content =
+                        Screens.getScreen(selectedTab: selectedTab)
+                        ?? Screens.home
                     switch content {
                     case .home:
                         HomeAlertButton(isPresented: $alerIsPresented)
                     case .radio:
                         RadioAlertButton(isPresented: $alerIsPresented)
                     case .playlist:
-                        PlaylistAddSongAlert(playlistId: selectedTab.split(separator: "/").map({ String($0)})[1],isPresented: $alerIsPresented)
+                        PlaylistAddSongAlert(
+                            playlistId: selectedTab.split(separator: "/").map({
+                                String($0)
+                            })[1], isPresented: $alerIsPresented)
                     default:
                         EmptyView()
                     }
@@ -42,11 +47,15 @@ struct ContentView: View {
             .containerRelativeFrame([.horizontal, .vertical])
             .background(DarkTheme.backgroundColor.color)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(DarkTheme.mainContainerColor.color, for: .bottomBar)
+            .toolbarBackground(
+                DarkTheme.mainContainerColor.color, for: .bottomBar
+            )
             .toolbarBackgroundVisibility(.visible, for: .bottomBar)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
-                    if let title = Screens.getScreen(selectedTab: selectedTab)?.title {
+                    if let title = Screens.getScreen(selectedTab: selectedTab)?
+                        .title
+                    {
                         Text(title)
                             .foregroundColor(DarkTheme.textHighColor.color)
                             .font(.largeTitle)
@@ -54,11 +63,12 @@ struct ContentView: View {
                     }
                 }
                 ToolbarItem(placement: .topBarTrailing) {
-                    Screens.rightButton(selectedTab: selectedTab, isPresented: $alerIsPresented)
+                    Screens.rightButton(
+                        selectedTab: selectedTab, isPresented: $alerIsPresented)
                 }
                 ToolbarItemGroup(placement: .bottomBar) {
                     ForEach(Screens.allCases, id: \.self) { s in
-                        if (s.icon != nil) {
+                        if s.icon != nil {
                             Spacer()
                             Button(action: {
                                 selectedTab = s.rawValue
@@ -71,7 +81,11 @@ struct ContentView: View {
                                         .fontWeight(.bold)
                                 }
                                 .padding()
-                                .foregroundColor(getCurrentRoute(selectedTab: selectedTab) == s.rawValue ? DarkTheme.primaryColor.color : DarkTheme.textDisabledGray.color)
+                                .foregroundColor(
+                                    getCurrentRoute(selectedTab: selectedTab)
+                                        == s.rawValue
+                                        ? DarkTheme.primaryColor.color
+                                        : DarkTheme.textDisabledGray.color)
                             }
                             .buttonStyle(PlainButtonStyle())
                             Spacer()
@@ -81,9 +95,9 @@ struct ContentView: View {
             }
         }
     }
-    
+
     func getCurrentRoute(selectedTab: String) -> String {
-        return selectedTab.split(separator: "/").map { s in String(s)}[0]
+        return selectedTab.split(separator: "/").map { s in String(s) }[0]
     }
 }
 

@@ -5,8 +5,8 @@
 //  Created by eb209 on 2024/12/8.
 //
 
-import SwiftData
 import Foundation
+import SwiftData
 
 enum SongType: Codable {
     case local(bookmarkData: Data)
@@ -23,7 +23,10 @@ final class SongModel {
     @Attribute var album: String?
     @Attribute var artwork: Data?
 
-    init (playlist: PlaylistModel?, songType: SongType, title: String? = nil, artist: String? = nil, album: String? = nil, artwork: Data? = nil) {
+    init(
+        playlist: PlaylistModel?, songType: SongType, title: String? = nil,
+        artist: String? = nil, album: String? = nil, artwork: Data? = nil
+    ) {
         self.songId = UUID()
         self.songType = songType
         self.playlist = playlist

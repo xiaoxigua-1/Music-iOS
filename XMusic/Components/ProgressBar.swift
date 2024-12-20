@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProgressBar: View {
     var progress: Float
-    
+
     var body: some View {
         GeometryReader { geome in
             Rectangle()

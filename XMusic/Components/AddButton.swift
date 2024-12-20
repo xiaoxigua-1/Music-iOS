@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AddButton: View {
     @Binding var isPresented: Bool
-    
+
     var body: some View {
         ZStack {
             Button(action: {

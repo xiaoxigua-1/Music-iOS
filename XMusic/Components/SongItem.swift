@@ -12,7 +12,7 @@ struct SongItem: View {
     var playing: Bool
     var hasArtwork = true
     @State var artworkImage: UIImage? = nil
-    
+
     var body: some View {
         HStack {
             if hasArtwork {
@@ -42,7 +42,7 @@ struct SongItem: View {
                     }
                 }
             }
-            
+
             VStack {
                 Text(song.title ?? "Unknown Title")
                     .font(.title3)
@@ -58,14 +58,15 @@ struct SongItem: View {
                     .foregroundStyle(DarkTheme.textMediumGray.color)
             }
         }.onAppear {
-            if let data = song.artwork, let uiImage = UIImage(data: data), hasArtwork {
+            if let data = song.artwork, let uiImage = UIImage(data: data),
+                hasArtwork
+            {
                 self.artworkImage = uiImage
             }
         }
     }
 }
 
-
 #Preview {
-    
+
 }

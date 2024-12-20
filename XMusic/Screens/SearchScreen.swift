@@ -10,7 +10,7 @@ import SwiftUI
 struct SearchScreen: View {
     var body: some View {
         HStack {
-            
+
         }
     }
 }

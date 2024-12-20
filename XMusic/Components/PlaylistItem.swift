@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PlaylistItem: View {
     @State var playlistLIst: PlaylistModel
-    
+
     var body: some View {
         HStack {
             Image(systemName: "music.note.list")
@@ -39,6 +39,10 @@ struct PlaylistItem: View {
 }
 
 #Preview {
-    PlaylistItem(playlistLIst: PlaylistModel(playlistTitle: "Test playlist", playlistDescription: "Test description"))
-        .background(DarkTheme.backgroundColor.color)
+    PlaylistItem(
+        playlistLIst: PlaylistModel(
+            playlistTitle: "Test playlist",
+            playlistDescription: "Test description")
+    )
+    .background(DarkTheme.backgroundColor.color)
 }

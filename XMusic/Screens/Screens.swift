@@ -5,15 +5,15 @@
 //  Created by eb209 on 2024/12/8.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 enum Screens: String, CaseIterable {
     case home = "home"
     case radio = "radio"
     case search = "search"
     case playlist = "home/.+"
-    
+
     var title: String? {
         switch self {
         case .playlist:
@@ -22,7 +22,7 @@ enum Screens: String, CaseIterable {
             return String(describing: self).capitalized
         }
     }
-    
+
     var icon: String? {
         switch self {
         case .home:
@@ -35,23 +35,25 @@ enum Screens: String, CaseIterable {
             return nil
         }
     }
-    
+
     static func getScreen(selectedTab: String) -> Screens? {
         for screen in Screens.allCases {
-            let regex = try! Regex("^\(screen.rawValue)$").anchorsMatchLineEndings()
-            
+            let regex = try! Regex("^\(screen.rawValue)$")
+                .anchorsMatchLineEndings()
+
             if selectedTab.contains(regex) {
                 return screen
             }
         }
-        
+
         return nil
     }
-    
+
     @ViewBuilder
     static func screen(selectedTab: Binding<String>) -> some View {
-        let content = getScreen(selectedTab: selectedTab.wrappedValue) ?? Screens.home
-        
+        let content =
+            getScreen(selectedTab: selectedTab.wrappedValue) ?? Screens.home
+
         switch content {
         case .home:
             HomeScreen(selectedTab: selectedTab)
@@ -60,14 +62,19 @@ enum Screens: String, CaseIterable {
         case .search:
             SearchScreen()
         case .playlist:
-            PlaylistScreen(playlistId: selectedTab.wrappedValue.split(separator: "/").map { String($0) }[1])
+            PlaylistScreen(
+                playlistId: selectedTab.wrappedValue.split(separator: "/").map {
+                    String($0)
+                }[1])
         }
     }
-    
+
     @ViewBuilder
-    static func rightButton(selectedTab: String, isPresented: Binding<Bool>) -> some View {
+    static func rightButton(selectedTab: String, isPresented: Binding<Bool>)
+        -> some View
+    {
         let content = getScreen(selectedTab: selectedTab) ?? Screens.home
-        
+
         switch content {
         case .home, .radio, .playlist:
             AddButton(isPresented: isPresented)

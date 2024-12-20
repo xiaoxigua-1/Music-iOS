@@ -5,20 +5,21 @@
 //  Created by eb209 on 2024/12/8.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 @main
 struct XMusicApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
             PlaylistModel.self,
-            SongModel.self
+            SongModel.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema)
 
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            return try ModelContainer(
+                for: schema, configurations: [modelConfiguration])
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
