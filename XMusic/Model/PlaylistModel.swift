@@ -13,7 +13,7 @@ final class PlaylistModel {
     @Attribute(.unique) var playlistId: UUID
     @Attribute var playlistTitle: String
     @Attribute var playlistDescription: String
-    @Relationship var songs: [SongModel]
+    @Relationship(deleteRule: .cascade, inverse: \SongModel.playlist) var songs = [SongModel]()
     
     init(playlistTitle: String, playlistDescription: String) {
         self.playlistId = UUID()

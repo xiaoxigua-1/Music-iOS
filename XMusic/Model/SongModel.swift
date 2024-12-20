@@ -8,20 +8,25 @@
 import SwiftData
 import Foundation
 
+enum SongType: Codable {
+    case local(bookmarkData: Data)
+    case stream(url: URL)
+}
+
 @Model
 final class SongModel {
     @Attribute(.unique) var songId: UUID
-    @Relationship(deleteRule: .cascade, inverse: \PlaylistModel.songs) var playlist: PlaylistModel
-    @Attribute var bookmark: Data
+    @Attribute var playlist: PlaylistModel?
+    @Attribute var songType: SongType
     @Attribute var title: String?
     @Attribute var artist: String?
     @Attribute var album: String?
     @Attribute var artwork: Data?
 
-    init (playlist: PlaylistModel, bookmark: Data, title: String? = nil, artist: String? = nil, album: String? = nil, artwork: Data? = nil) {
+    init (playlist: PlaylistModel?, songType: SongType, title: String? = nil, artist: String? = nil, album: String? = nil, artwork: Data? = nil) {
         self.songId = UUID()
+        self.songType = songType
         self.playlist = playlist
-        self.bookmark = bookmark
         self.title = title
         self.artist = artist
         self.album = album

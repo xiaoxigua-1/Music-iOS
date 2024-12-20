@@ -7,14 +7,6 @@
 
 import SwiftUI
 
-func getNowPlayingSong(musicPlayer: MusicPlayerDelegate) -> SongModel? {
-    if let songs = musicPlayer.playlist?.songs {
-        return songs[musicPlayer.index]
-    } else {
-        return nil
-    }
-}
-
 struct PlayerScreen: View {
     @EnvironmentObject var musicPlayer: MusicPlayerDelegate
     @State var fullScreen = false
@@ -23,7 +15,7 @@ struct PlayerScreen: View {
         ZStack(alignment: .bottomLeading) {
             HStack {
                 ZStack {
-                    if let data = getNowPlayingSong(musicPlayer: musicPlayer)?.artwork, let uiImage = UIImage(data: data) {
+                    if let data = musicPlayer.nowPlayingSong?.artwork, let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
                             .resizable()
                     } else {
@@ -38,14 +30,18 @@ struct PlayerScreen: View {
                 .cornerRadius(8)
                 
                 VStack {
-                    Text(getNowPlayingSong(musicPlayer: musicPlayer)?.title ?? "Unknown Title")
+                    Text(musicPlayer.nowPlayingSong?.title ?? "Unknown Title")
                         .font(.callout)
                         .fontWeight(.bold)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                         .foregroundStyle(DarkTheme.textHighColor.color)
-                    Text(getNowPlayingSong(musicPlayer: musicPlayer)?.artist ?? "Unknown Artist")
+                    Text(musicPlayer.nowPlayingSong?.artist ?? "Unknown Artist")
                         .font(.caption2)
                         .frame(maxWidth: .infinity, alignment: .leading)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                         .foregroundStyle(DarkTheme.textMediumGray.color)
                 }
                 .padding([.leading], 12)
@@ -105,7 +101,7 @@ struct PlayerFullScreen: View {
             Spacer()
             VStack(alignment: .center) {
                 ZStack {
-                    if let data = getNowPlayingSong(musicPlayer: musicPlayer)?.artwork, let uiImage = UIImage(data: data) {
+                    if let data = musicPlayer.nowPlayingSong?.artwork, let uiImage = UIImage(data: data) {
                         Image(uiImage: uiImage)
                             .resizable()
                     } else {
@@ -120,26 +116,37 @@ struct PlayerFullScreen: View {
                 .cornerRadius(12)
                 .padding([.bottom], 28)
                 
-                Text(getNowPlayingSong(musicPlayer: musicPlayer)?.title ?? "Unknown Title")
+                Text(musicPlayer.nowPlayingSong?.title ?? "Unknown Title")
                     .font(.title)
                     .fontWeight(.bold)
                     .foregroundStyle(DarkTheme.textHighColor.color)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                     .padding([.bottom], 14)
-                Text(getNowPlayingSong(musicPlayer: musicPlayer)?.artist ?? "Unknown Artist")
+                Text(musicPlayer.nowPlayingSong?.artist ?? "Unknown Artist")
                     .font(.caption)
                     .foregroundStyle(DarkTheme.textMediumGray.color)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                     .padding([.bottom], 28)
                 
                 HStack {
                     Text(musicPlayer.progress?.time.stringValue ?? "00:00")
                         .foregroundStyle(DarkTheme.textMediumGray.color)
                     Slider(value: Binding(get: {
-                        musicPlayer.progress?.position ?? 0
+                        switch musicPlayer.nowPlayingSong?.songType {
+                        case .local:
+                            return Double(musicPlayer.progress?.position ?? 0)
+                        case .stream:
+                            return 1
+                        case nil:
+                            return 0
+                        }
                     }, set: {
                         if (musicPlayer.nowIsPlaying) {
                             musicPlayer.musicPlayer.pause()
                         }
-                        musicPlayer.progress?.position = $0
+                        musicPlayer.progress?.position = Float($0)
                     }), in: 0...1, onEditingChanged: { editing in
                         musicPlayer.musicPlayer.position = musicPlayer.progress?.position ?? 0
                         if (!musicPlayer.nowIsPlaying) {

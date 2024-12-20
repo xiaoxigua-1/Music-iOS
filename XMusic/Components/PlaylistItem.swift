@@ -25,9 +25,13 @@ struct PlaylistItem: View {
                     .font(.title3)
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                     .foregroundStyle(DarkTheme.textHighColor.color)
                 Text(playlistLIst.playlistDescription)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                     .foregroundStyle(DarkTheme.textMediumGray.color)
             }.padding(.leading, 12)
         }

@@ -30,6 +30,7 @@ class MusicPlayerDelegate: NSObject, VLCMediaPlayerDelegate, ObservableObject {
     @Published var playlist: PlaylistModel? = nil
     @Published var index: Int = 0
     @Published var nowIsPlaying = false
+    @Published var nowPlayingSong: SongModel? = nil
     @Published var loopMode: LoopMode = .Playlist
     @Published var progress: Progress? = nil
     
@@ -46,6 +47,9 @@ class MusicPlayerDelegate: NSObject, VLCMediaPlayerDelegate, ObservableObject {
             name: Notification.Name(VLCMediaPlayerTimeChanged),
             object: nil
         )
+    }
+    
+    @objc func mediaPlayerTitleChanged(_ aNotification: Notification) {
     }
     
     @objc func mediaPlayerStateChanged(_ aNotification: Notification) {
@@ -102,6 +106,19 @@ class MusicPlayerDelegate: NSObject, VLCMediaPlayerDelegate, ObservableObject {
         setMedia(index: index)
     }
     
+    func setMedia(media: MediaData) {
+        if musicPlayer.media != nil {
+            musicPlayer.stop()
+        }
+        
+        if playlist != nil {
+            playlist = nil
+        }
+        
+        musicPlayer.media = media
+        nowPlayingSong = media.song
+    }
+    
     private func setMedia(index: Int) {
         if musicPlayer.media != nil {
             musicPlayer.stop()
@@ -109,6 +126,7 @@ class MusicPlayerDelegate: NSObject, VLCMediaPlayerDelegate, ObservableObject {
         
         if let song = playlist?.songs[index] {
             musicPlayer.media = MediaData(song: song)
+            nowPlayingSong = song
         }
     }
 }

@@ -19,24 +19,25 @@ struct HomeScreen: View {
                 selectedTab += "/\(pl.playlistId)"
             }, label: {
                 PlaylistItem(playlistLIst: pl)
-                    .swipeActions(edge: .trailing, content: {
-                        Button {
-                            modelContext.delete(pl)
-                        } label: {
-                            Image(systemName: "trash")
-                        }
-                        .tint(.red)
-                        
-                        Button {
-
-                        } label: {
-                            Image(systemName: "pencil")
-                        }
-                        .tint(.green)
-                    })
             })
             .listRowBackground(Color.clear)
+            .swipeActions(edge: .trailing, content: {
+                Button {
+                    modelContext.delete(pl)
+                } label: {
+                    Image(systemName: "trash")
+                }
+                .tint(.red)
+                
+                Button {
+
+                } label: {
+                    Image(systemName: "pencil")
+                }
+                .tint(.green)
+            })
         }
+        .safeAreaPadding([.bottom], 80)
         .scrollContentBackground(.hidden)
         .listStyle(.plain)
         .background(DarkTheme.backgroundColor.color)

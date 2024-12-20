@@ -62,10 +62,11 @@ struct PlaylistScreen: View {
                     musicPlayer.setPlaylist(playlist: p, index: index)
                     musicPlayer.musicPlayer.play()
                 }, label: {
-                    SongItem(song: song, playing: musicPlayer.index == index && musicPlayer.playlist?.playlistId == p.playlistId)
+                    SongItem(song: song, playing: musicPlayer.nowPlayingSong?.songId == song.songId)
                 })
                 .listRowBackground(Color.clear)
             }
+            .safeAreaPadding([.bottom], 80)
             .scrollContentBackground(.hidden)
             .listStyle(.plain)
             .background(DarkTheme.backgroundColor.color)
@@ -88,16 +89,13 @@ struct PlaylistAddSongAlert: View {
                     for url in try! FileManager.default.contentsOfDirectory(at: folderUrl, includingPropertiesForKeys: nil) {
                         let playlist = playlist.filter({ $0.playlistId.uuidString == playlistId }).first!
                         MediaData(playlist: playlist, url: url).getMetas { mediaData in
-                            if let mediaData = mediaData {
-                                modelContext.insert(mediaData)
-                            }
+                            modelContext.insert(mediaData)
                         }
                     }
                 case .failure(let error):
                     print(error.localizedDescription)
                 }
             })
-            .environment(\.colorScheme, .dark)
     }
 }
 

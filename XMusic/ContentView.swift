@@ -30,6 +30,8 @@ struct ContentView: View {
                     switch content {
                     case .home:
                         HomeAlertButton(isPresented: $alerIsPresented)
+                    case .radio:
+                        RadioAlertButton(isPresented: $alerIsPresented)
                     case .playlist:
                         PlaylistAddSongAlert(playlistId: selectedTab.split(separator: "/").map({ String($0)})[1],isPresented: $alerIsPresented)
                     default:

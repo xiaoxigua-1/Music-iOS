@@ -13,8 +13,8 @@ class MediaData: VLCMedia {
     private var dispatchGroup = DispatchGroup()
     
     init(playlist: PlaylistModel, url: URL) {
-        let bookmarkData = BookmarkController.addBookmark(url: url)
-        song = SongModel(playlist: playlist, bookmark: bookmarkData!)
+        let bookmarkData = BookmarkController.addBookmark(url: url)!
+        song = SongModel(playlist: playlist, songType: .local(bookmarkData: bookmarkData))
         
         super.init(url: url)
         delegate = self
@@ -22,34 +22,48 @@ class MediaData: VLCMedia {
     }
     
     init(song: SongModel) {
-        let url = BookmarkController.loadBookmark(bookmarkData: song.bookmark)!
+        var mediaURL: URL? = nil
+        
+        switch song.songType {
+        case .local(let bookmarkData):
+            mediaURL = BookmarkController.loadBookmark(bookmarkData: bookmarkData)
+        case .stream(let url):
+            mediaURL = url
+        }
+        
         self.song = song
         
-        super.init(url: url)
+        super.init(url: mediaURL!)
         delegate = self
         dispatchGroup.enter()
     }
     
-    func getMetas(ret: @escaping (SongModel?) -> ()) {
-        parse(timeout: 1)
+    func getMetas(ret: @escaping (SongModel) -> ()) {
+        switch song.songType {
+        case .local:
+            parse(options: .fetchLocal)
+            break
+        case .stream:
+            parse(options: .fetchNetwork)
+            break
+        }
         
         dispatchGroup.notify(queue: .main) {
             if (!self.tracksInformation.isEmpty) {
-                let title = self.metaData.title
-                let artist = self.metaData.artist
-                let album = self.metaData.album
-                let artworkURL = self.metaData.artworkURL
-                let artworkData = try! Data(contentsOf: artworkURL!)
+                self.song.title = self.metaData.title ?? self.url?.lastPathComponent
+                self.song.artist = self.metaData.artist
+                self.song.album = self.metaData.album
+                var artworkData: Data? = nil
                 
-                ret(SongModel(
-                    playlist: self.song.playlist,
-                    bookmark: self.song.bookmark,
-                    title: title, artist: artist, album: album, artwork: artworkData))
-            } else {
-                ret(nil)
+                if let artworkURL = self.metaData.artworkURL {
+                    artworkData = try! Data(contentsOf: artworkURL)
+                }
+                
+                self.song.artwork = artworkData
             }
+            
+            ret(self.song)
         }
-        
     }
 }
 
