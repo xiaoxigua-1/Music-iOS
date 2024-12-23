@@ -99,18 +99,27 @@ struct PlaylistAddSongAlert: View {
     var body: some View {
         HStack {}
             .fileImporter(
-                isPresented: $isPresented, allowedContentTypes: [.folder],
+                isPresented: $isPresented, allowedContentTypes: [.folder, .audio],
                 onCompletion: { result in
                     switch result {
                     case .success(let file):
-                        let folderUrl = file.absoluteURL
-                        for url in try! FileManager.default.contentsOfDirectory(
-                            at: folderUrl, includingPropertiesForKeys: nil)
-                        {
-                            let playlist = playlist.filter({
-                                $0.playlistId.uuidString == playlistId
-                            }).first!
-                            MediaData(playlist: playlist, url: url).getMetas {
+                        let absoluteURL = file.absoluteURL
+                        let playlist = playlist.filter({
+                            $0.playlistId.uuidString == playlistId
+                        }).first!
+                        let isDir = try? file.resourceValues(forKeys: [.isDirectoryKey]).isDirectory
+                        
+                        if isDir == true {
+                            for url in try! FileManager.default.contentsOfDirectory(
+                                at: absoluteURL, includingPropertiesForKeys: nil)
+                            {
+                                MediaData(playlist: playlist, url: url).getMetas {
+                                    mediaData in
+                                    modelContext.insert(mediaData)
+                                }
+                            }
+                        } else {
+                            MediaData(playlist: playlist, url: absoluteURL).getMetas {
                                 mediaData in
                                 modelContext.insert(mediaData)
                             }
