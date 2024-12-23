@@ -24,6 +24,7 @@ struct HomeScreen: View {
                 }
             )
             .listRowBackground(Color.clear)
+            .listRowSeparatorTint(Color.white.opacity(0.3))
             .swipeActions(
                 edge: .trailing,
                 content: {

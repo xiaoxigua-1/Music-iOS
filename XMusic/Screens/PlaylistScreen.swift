@@ -80,6 +80,7 @@ struct PlaylistScreen: View {
                     }
                 )
                 .listRowBackground(Color.clear)
+                .listRowSeparatorTint(Color.white.opacity(0.3))
             }
             .safeAreaPadding([.bottom], 80)
             .scrollContentBackground(.hidden)

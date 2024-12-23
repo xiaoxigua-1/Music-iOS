@@ -42,6 +42,7 @@ struct RadioScreen: View {
                         }
                     )
                     .listRowBackground(Color.clear)
+                    .listRowSeparatorTint(Color.white.opacity(0.3))
                 }
                 .onDelete(perform: { offsets in
                     for i in offsets {
